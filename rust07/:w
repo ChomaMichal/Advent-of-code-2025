@@ -1,0 +1,30 @@
+use std::fs;
+fn main() {
+    let input = fs::read_to_string("input/input").unwrap();
+    let mut lines: Vec<Vec<char>> = input.lines()
+        .map(|e| e.chars().collect())
+        .collect();
+    
+    for i in 0..(lines.len()){
+        if i == lines.len() - 1 {break}
+
+        for j in 0..(lines[i].len()){
+            if lines[i][j] == 'S'{
+                if lines[i + 1][j] == '^'{
+                    if j != 0 {lines[i + 1][j - 1] = 'S'}
+                    if j != lines[i].len() - 1{lines[i + 1][j + 1] = 'S'}
+                } else {
+                    lines[i + 1][j] = 'S';
+                }
+            }
+        }
+    }
+
+    let mut res = 0;
+    for c in lines.last().iter(){
+        if c == 'S'{
+            res += 1;
+        }
+    }
+
+}
