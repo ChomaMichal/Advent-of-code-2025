@@ -1,0 +1,99 @@
+use std::fs;
+fn  e_dis(p: &(f64,f64,f64), q: &(f64,f64,f64))->f64{
+    let ret:f64;
+    ret = ((p.0 - q.0).powi(2) + (p.1 - q.1).powi(2) +(p.2 - q.2).powi(2)).sqrt();
+    return ret;
+}
+
+fn main() {
+    // let input = fs::read_to_string("input/input").unwrap();
+    let input = fs::read_to_string("input/test").unwrap();
+    let lines = input.lines();
+    println!("{}=lines.len()", lines.clone().collect::<Vec<&str>>().len());
+    let mut coor :Vec<(f64, f64, f64)> = vec![];
+    // 0 is distance 1 is position of first 2 is position of second
+    let mut dis : Vec<(f64, usize, usize)> = vec![];
+    println!("{}=lines[19]", lines.to_owned().collect::<Vec<&str>>()[19]);
+ 
+    for line in lines.into_iter(){
+        let hehe: Vec<&str> = line.split(',').map(|e| e.trim()).collect();
+        let triple :(f64, f64, f64) =(
+            hehe[0].parse().unwrap(),
+            hehe[1].parse().unwrap(),
+            hehe[2].parse().unwrap(),
+        );
+        coor.push(triple);
+    }
+
+    // now the are parsed to numbers
+    //
+
+    for (i,p) in coor.iter().enumerate(){
+        if i == coor.len() - 1 {break}
+        for (j,q) in coor.iter().enumerate().skip(i + 1){
+            dis.push((
+                e_dis(p, q),
+                i,
+                j,
+            ))
+        }
+    }
+    // println!("{}==dis.len()", dis.len());
+    dis.sort_by(|a,b| a.0.partial_cmp(&b.0).unwrap());
+    // println!("{}==dis.len()", dis.len());
+    // for (i, s) in dis.iter().enumerate() {
+    //     println!("{}| {},{},{}",i, s.0,s.1,s.2);
+    // }
+
+    // println!("{}==dis.len()", dis.len());
+    let mut conected :Vec<Vec<usize>> = vec![];
+    let mut max = 10;
+    'outer :for s in dis{
+        if max == 0 {break}
+        for i in 0..conected.len(){
+            if conected[i].contains(&s.1){
+                if conected[i].contains(&s.2) {break;}
+                for j in (i + 1)..conected.len(){
+                    if conected[j].contains(&s.2){
+                        conected[i].append(& mut conected[j]);
+                        conected.remove(j);
+                        max -= 1;
+                        continue 'outer;
+                    }
+                }
+                conected[i].push(s.2);
+                max -= 1;
+                continue 'outer;
+            }
+            else if conected[i].contains(&s.2){
+                if conected[i].contains(&s.1) {break;}
+                for j in (i + 1)..conected.len(){
+                    if conected[j].contains(&s.1){
+                        conected[i].append(& mut conected[j]);
+                        conected.remove(j);
+                        max -= 1;
+                        continue 'outer;
+                    }
+                }
+                conected[i].push(s.1);
+                max -= 1;
+                continue 'outer;
+            }
+        }
+        conected.push(vec![s.1,s.2]);
+        max -= 1;
+    }
+    let mut res = 1;
+
+    conected.sort_by(|b, a| a.len().partial_cmp(&(b.len())).unwrap());
+
+    for e in conected.iter().take(3) {
+        println!("{}", e.len());
+        res *= e.len();
+    }
+    println!("a{res}");
+}
+
+fn testing(x: String) {
+
+}

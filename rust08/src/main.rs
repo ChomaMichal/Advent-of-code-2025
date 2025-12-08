@@ -6,8 +6,8 @@ fn  e_dis(p: &(f64,f64,f64), q: &(f64,f64,f64))->f64{
 }
 
 fn main() {
-    // let input = fs::read_to_string("input/input").unwrap();
-    let input = fs::read_to_string("input/test").unwrap();
+    let input = fs::read_to_string("input/input").unwrap();
+    // let input = fs::read_to_string("input/test").unwrap();
     let lines = input.lines();
     println!("{}=lines.len()", lines.clone().collect::<Vec<&str>>().len());
     let mut coor :Vec<(f64, f64, f64)> = vec![];
@@ -15,7 +15,7 @@ fn main() {
     let mut dis : Vec<(f64, usize, usize)> = vec![];
     println!("{}=lines[19]", lines.to_owned().collect::<Vec<&str>>()[19]);
  
-    for line in lines.clone().into_iter(){
+    for line in lines.into_iter(){
         let hehe: Vec<&str> = line.split(',').map(|e| e.trim()).collect();
         let triple :(f64, f64, f64) =(
             hehe[0].parse().unwrap(),
@@ -48,32 +48,67 @@ fn main() {
 
     // println!("{}==dis.len()", dis.len());
     let mut conected :Vec<Vec<usize>> = vec![];
-    for i in 0..lines.into_iter().count() {
-        conected.push(vec![i]);
-    }
+    let mut max = 1000;
+    'outer :for s in dis{
+        if max == 0 {break}
+        for i in 0..conected.len(){
+            if conected[i].contains(&s.1){
+                if conected[i].contains(&s.2) {break;}
+                for j in (i + 1)..conected.len(){
+                    if conected[j].contains(&s.2){
+                        let mut tmp = conected[j].clone();
+                        conected[i].append(& mut tmp);
+                        conected.remove(j);
+                        if conected[i].len() == coor.len(){
+                            let hehe = coor[s.1].0 * coor[s.2].0;
+                            println!("result == {hehe}");
+                        }
+                        continue 'outer;
+                    }
+                }
+                conected[i].push(s.2);
+                if conected[i].len() == coor.len(){
+                    let hehe = coor[s.1].0 * coor[s.2].0;
+                    println!("result == {hehe}");
+                }
+                // max -= 1;
+                continue 'outer;
+            }
+            else if conected[i].contains(&s.2){
+                if conected[i].contains(&s.1) {break;}
+                for j in (i + 1)..conected.len(){
+                    if conected[j].contains(&s.1){
+                        let mut tmp = conected[j].clone();
+                        conected[i].append(& mut tmp);
+                        conected.remove(j);
+                        max -= 1;
+                        if conected[i].len() == coor.len(){
+                            let hehe = coor[s.1].0 * coor[s.2].0;
+                            println!("result == {hehe}");
+                        }
+                        continue 'outer;
+                    }
+                }
+                conected[i].push(s.1);
+                // max -= 1;
+                if conected[i].len() == coor.len(){
+                    let hehe = coor[s.1].0 * coor[s.2].0;
+                    println!("result == {hehe}");
+                }
 
-    let mut connections_left = 9;
-    for s in dis {
-        if connections_left == 0 {break}
-        if conected.iter().position(|x| x.contains(&s.1)) == conected.iter().position(|x| x.contains(&s.2)) {
-            continue;
+                continue 'outer;
+            }
         }
-        let c1_index = conected.iter().position(|x| x.contains(&s.1)).unwrap();
-        let mut cir = conected.remove(c1_index);
-        conected.iter_mut().find(|x| x.contains(&s.2)).unwrap().append(&mut cir);
-        connections_left -= 1;
+        conected.push(vec![s.1,s.2]);
+        // max -= 1;
     }
     let mut res = 1;
 
     conected.sort_by(|b, a| a.len().partial_cmp(&(b.len())).unwrap());
 
-    for e in conected.iter() {
-        println!("{:?}", e);
+    for e in conected.iter().take(3) {
+        println!("{}", e.len());
         res *= e.len();
     }
     println!("a{res}");
-}
-
-fn testing(x: String) {
-
 }
