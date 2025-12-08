@@ -1,0 +1,7 @@
+use std::fs;
+fn main() {
+    // let input = fs::read_to_string("input/input").unwrap();
+    let input = fs::read_to_string("input/test").unwrap();
+    let coord :Vec<(usize,usize,usize)> = input.lines()
+            .map(|e| e.split(',').map(|e|, e.trim_end("\n")))
+}
