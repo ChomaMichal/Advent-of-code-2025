@@ -1,0 +1,89 @@
+use std::fs;
+#[derive(Copy,Clone, Debug, PartialEq, Eq)]
+enum Square{
+    BLACK,
+    RED,
+    GREEN,
+}
+
+fn print_grid(grid: Vec<Vec<Square>>){
+    for row in grid{
+        for item in row{
+            match item{
+                Square::BLACK => {print!(".");}
+                Square::RED => {print!("R");}
+                Square::GREEN => {print!("G");}
+            }
+        }
+    }
+}
+
+fn main() {
+    // let input = fs::read_to_string("input/input").unwrap();
+    let input = fs::read_to_string("input/test").unwrap();
+
+    let lines = input.lines();
+
+    let mut arr : Vec<(usize, usize)> = vec![];
+
+    for line in lines.into_iter(){
+        let hehe: Vec<&str> = line.split(',').map(|e| e.trim()).collect();
+        if line.is_empty() { break;}
+        let tmp :(usize, usize) = (
+            hehe[0].parse().unwrap(),
+            hehe[1].parse().unwrap(),
+        );
+        arr.push(tmp);
+        // println!("{:?}", tmp);
+    }
+    arr.sort_by(|a,b| a.1.cmp(&b.1));
+    let y_max = arr.last().unwrap().1;
+    arr.sort_by(|a,b| a.cmp(b));
+    let x_max = arr.last().unwrap().0;
+    println!("{y_max} == y_max");
+    println!("{x_max} == x_max");
+    let mut grid: Vec<Vec<Square>> = vec![vec![Square::BLACK; y_max + 1]; x_max + 1];
+    for item in arr{
+        grid[item.0][item.1] = Square::RED;
+    }
+    print_grid(grid);
+
+}
+
+
+
+
+//
+// fn main() {
+//     let input = fs::read_to_string("input/input").unwrap();
+//     // let input = fs::read_to_string("input/test").unwrap();
+//
+//     let lines = input.lines();
+//
+//     let mut arr : Vec<(usize, usize)> = vec![];
+//
+//     for line in lines.into_iter(){
+//         let hehe: Vec<&str> = line.split(',').map(|e| e.trim()).collect();
+//         if line.is_empty() { break;}
+//         let tmp :(usize, usize) = (
+//             hehe[0].parse().unwrap(),
+//             hehe[1].parse().unwrap(),
+//         );
+//         arr.push(tmp);
+//         // println!("{:?}", tmp);
+//     }
+//     arr.sort_by(|a,b| a.cmp(b));
+//     println!("{:?}", arr.last().unwrap());
+//     let mut res: usize = 0;
+//     for (i, s) in arr.iter().enumerate(){
+//         for  p in arr.iter().skip(i + 1){
+//             let tmp = (1 + s.0.abs_diff(p.0)) * (1 + s.1.abs_diff(p.1));
+//             // println!("{} = s.0|{} = s.1|{} = p.0|{} = p.1|{tmp} = tmp", s.0, s.1,p.0,p.1);
+//             if tmp > res {
+//                 res = tmp;
+//             }
+//         }
+//     }
+//     print!("{res}");
+//
+// }

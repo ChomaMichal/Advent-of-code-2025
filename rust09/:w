@@ -1,0 +1,33 @@
+use std::fs;
+fn main() {
+    let input = fs::read_to_string("input/input").unwrap();
+    // let input = fs::read_to_string("input/test").unwrap();
+
+    let lines = input.lines();
+
+    let mut arr : Vec<(usize, usize)> = vec![];
+
+    for line in lines.into_iter(){
+        let hehe: Vec<&str> = line.split(',').map(|e| e.trim()).collect();
+        if line.is_empty() { break;}
+        let tmp :(usize, usize) = (
+            hehe[0].parse().unwrap(),
+            hehe[1].parse().unwrap(),
+        );
+        arr.push(tmp);
+        // println!("{:?}", tmp);
+    }
+    arr.sort_by(|a,b| a.cmp(b));
+    let mut res: usize = 0;
+    for (i, s) in arr.iter().enumerate(){
+        for  p in arr.iter().skip(i + 1){
+            let tmp = (1 + s.0.abs_diff(p.0)) * (1 + s.1.abs_diff(p.1));
+            // println!("{} = s.0|{} = s.1|{} = p.0|{} = p.1|{tmp} = tmp", s.0, s.1,p.0,p.1);
+            if tmp > res {
+                res = tmp;
+            }
+        }
+    }
+    print!("{res}");
+
+}
